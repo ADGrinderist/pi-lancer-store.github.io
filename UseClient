@@ -1,136 +1,147 @@
-'use client'
-
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ShoppingCart, Heart, Search, Home, PlusSquare, User, X } from 'lucide-react'
-
-// Mock data for products/services
-const products = [
-  { id: 1, name: "Website Builder", price: 0.8, image: "/placeholder.svg?height=200&width=200" },
-  { id: 2, name: "Digital Artwork", price: 25, image: "/placeholder.svg?height=200&width=200" },
-  { id: 3, name: "Online Course", price: 50, image: "/placeholder.svg?height=200&width=200" },
-  { id: 4, name: "E-book Bundle", price: 15, image: "/placeholder.svg?height=200&width=200" },
-]
-
-export default function Component() {
-  const [selectedProduct, setSelectedProduct] = useState(null)
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-  const [walletAddress, setWalletAddress] = useState('')
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
-  const [referenceNumber, setReferenceNumber] = useState('')
-
-  const handlePurchase = (product) => {
-    setSelectedProduct(product)
-    setIsPaymentModalOpen(true)
-  }
-
-  const handlePayment = () => {
-    // Simulate payment process
-    setTimeout(() => {
-      setIsPaymentModalOpen(false)
-      setReferenceNumber(Math.random().toString(36).substr(2, 9).toUpperCase())
-      setIsConfirmationModalOpen(true)
-    }, 2000)
-  }
-
-  return (
-    <div className="min-h-screen bg-yellow-100">
-      <header className="bg-yellow-200 border-b border-purple-300">
-        <div className="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-purple-800">PI Store</h1>
-          <div className="flex items-center space-x-4">
-            <Search className="h-6 w-6 text-purple-600" />
-            <ShoppingCart className="h-6 w-6 text-purple-600" />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {products.map((product) => (
-            <Card key={product.id} className="bg-yellow-50 border-purple-200">
-              <CardHeader className="p-0">
-                <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
-              </CardHeader>
-              <CardContent className="p-4">
-                <CardTitle className="text-purple-800">{product.name}</CardTitle>
-                <p className="text-sm text-purple-600">{product.price} PI</p>
-              </CardContent>
-              <CardFooter className="p-4">
-                <Button onClick={() => handlePurchase(product)} className="w-full bg-purple-600 hover:bg-purple-700 text-yellow-100">Buy Now</Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </main>
-
-      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-        <DialogContent className="bg-yellow-50 border-purple-200">
-          <DialogHeader>
-            <DialogTitle className="text-purple-800">Complete Your Purchase</DialogTitle>
-            <DialogDescription className="text-purple-600">
-              Enter your PI wallet address to complete the transaction.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="wallet" className="text-right text-purple-600">
-                PI Wallet
-              </Label>
-              <Input
-                id="wallet"
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                className="col-span-3"
-              />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PI Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-yellow-100">
+    <header class="bg-yellow-200 border-b border-purple-300">
+        <div class="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-purple-800">PI Store</h1>
+            <div class="flex items-center space-x-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-purple-600"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-purple-600"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
             </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handlePayment} className="bg-purple-600 hover:bg-purple-700 text-yellow-100">Pay {selectedProduct?.price} PI</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isConfirmationModalOpen} onOpenChange={setIsConfirmationModalOpen}>
-        <DialogContent className="bg-yellow-50 border-purple-200">
-          <DialogHeader>
-            <DialogTitle className="text-purple-800">Purchase Confirmed</DialogTitle>
-            <DialogDescription className="text-purple-600">
-              Your transaction was successful. Here's your reference number for tracking:
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-center text-2xl font-bold text-purple-800">{referenceNumber}</p>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setIsConfirmationModalOpen(false)} className="bg-purple-600 hover:bg-purple-700 text-yellow-100">Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <footer className="fixed bottom-0 left-0 right-0 bg-yellow-200 border-t border-purple-300">
-        <div className="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
-          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
-            <Home className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
-            <Search className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
-            <PlusSquare className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
-            <Heart className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
-            <User className="h-6 w-6" />
-          </Button>
         </div>
-      </footer>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4">
+        <div id="products" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </main>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content bg-yellow-50 border-purple-200 rounded-lg">
+            <h2 class="text-xl font-bold text-purple-800 mb-4">Complete Your Purchase</h2>
+            <p class="text-purple-600 mb-4">Enter your PI wallet address to complete the transaction.</p>
+            <div class="mb-4">
+                <label for="wallet" class="block text-purple-600 mb-2">PI Wallet</label>
+                <input id="wallet" type="text" class="w-full p-2 border border-purple-300 rounded" placeholder="Enter wallet address">
+            </div>
+            <button id="payButton" class="bg-purple-600 hover:bg-purple-700 text-yellow-100 font-bold py-2 px-4 rounded">Pay <span id="payAmount"></span> PI</button>
+        </div>
     </div>
-  )
-}
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content bg-yellow-50 border-purple-200 rounded-lg">
+            <h2 class="text-xl font-bold text-purple-800 mb-4">Purchase Confirmed</h2>
+            <p class="text-purple-600 mb-4">Your transaction was successful. Here's your reference number for tracking:</p>
+            <p id="referenceNumber" class="text-center text-2xl font-bold text-purple-800 mb-4"></p>
+            <button id="closeConfirmation" class="bg-purple-600 hover:bg-purple-700 text-yellow-100 font-bold py-2 px-4 rounded">Close</button>
+        </div>
+    </div>
+
+    <footer class="fixed bottom-0 left-0 right-0 bg-yellow-200 border-t border-purple-300">
+        <div class="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
+            <button class="text-purple-600 hover:bg-yellow-300 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </button>
+            <button class="text-purple-600 hover:bg-yellow-300 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <button class="text-purple-600 hover:bg-yellow-300 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+            </button>
+            <button class="text-purple-600 hover:bg-yellow-300 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+            </button>
+            <button class="text-purple-600 hover:bg-yellow-300 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const products = [
+            { id: 1, name: "Premium Subscription", price: 10, image: "https://via.placeholder.com/200" },
+            { id: 2, name: "Digital Artwork", price: 25, image: "https://via.placeholder.com/200" },
+            { id: 3, name: "Online Course", price: 50, image: "https://via.placeholder.com/200" },
+            { id: 4, name: "E-book Bundle", price: 15, image: "https://via.placeholder.com/200" },
+        ];
+
+        const productsContainer = document.getElementById('products');
+        const paymentModal = document.getElementById('paymentModal');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const payButton = document.getElementById('payButton');
+        const closeConfirmation = document.getElementById('closeConfirmation');
+        const payAmount = document.getElementById('payAmount');
+        const referenceNumber = document.getElementById('referenceNumber');
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'bg-yellow-50 border-purple-200 rounded-lg overflow-hidden';
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-purple-800 font-bold">${product.name}</h3>
+                    <p class="text-sm text-purple-600">${product.price} PI</p>
+                    <button class="w-full bg-purple-600 hover:bg-purple-700 text-yellow-100 font-bold py-2 px-4 rounded mt-2" onclick="handlePurchase(${product.id})">Buy Now</button>
+                </div>
+            `;
+            return card;
+        }
+
+        products.forEach(product => {
+            productsContainer.appendChild(createProductCard(product));
+        });
+
+        function handlePurchase(productId) {
+            const product = products.find(p => p.id === productId);
+            payAmount.textContent = product.price;
+            paymentModal.style.display = 'block';
+        }
+
+        payButton.addEventListener('click', () => {
+            paymentModal.style.display = 'none';
+            setTimeout(() => {
+                referenceNumber.textContent = Math.random().toString(36).substr(2, 9).toUpperCase();
+                confirmationModal.style.display = 'block';
+            }, 2000);
+        });
+
+        closeConfirmation.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        window.onclick = function(event) {
+            if (event.target == paymentModal) {
+                paymentModal.style.display = "none";
+            }
+            if (event.target == confirmationModal) {
+                confirmationModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
