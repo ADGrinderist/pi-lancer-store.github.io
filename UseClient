@@ -1,0 +1,136 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { ShoppingCart, Heart, Search, Home, PlusSquare, User, X } from 'lucide-react'
+
+// Mock data for products/services
+const products = [
+  { id: 1, name: "Website Builder", price: 0.8, image: "/placeholder.svg?height=200&width=200" },
+  { id: 2, name: "Digital Artwork", price: 25, image: "/placeholder.svg?height=200&width=200" },
+  { id: 3, name: "Online Course", price: 50, image: "/placeholder.svg?height=200&width=200" },
+  { id: 4, name: "E-book Bundle", price: 15, image: "/placeholder.svg?height=200&width=200" },
+]
+
+export default function Component() {
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [walletAddress, setWalletAddress] = useState('')
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
+  const [referenceNumber, setReferenceNumber] = useState('')
+
+  const handlePurchase = (product) => {
+    setSelectedProduct(product)
+    setIsPaymentModalOpen(true)
+  }
+
+  const handlePayment = () => {
+    // Simulate payment process
+    setTimeout(() => {
+      setIsPaymentModalOpen(false)
+      setReferenceNumber(Math.random().toString(36).substr(2, 9).toUpperCase())
+      setIsConfirmationModalOpen(true)
+    }, 2000)
+  }
+
+  return (
+    <div className="min-h-screen bg-yellow-100">
+      <header className="bg-yellow-200 border-b border-purple-300">
+        <div className="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-purple-800">PI Store</h1>
+          <div className="flex items-center space-x-4">
+            <Search className="h-6 w-6 text-purple-600" />
+            <ShoppingCart className="h-6 w-6 text-purple-600" />
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto p-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {products.map((product) => (
+            <Card key={product.id} className="bg-yellow-50 border-purple-200">
+              <CardHeader className="p-0">
+                <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+              </CardHeader>
+              <CardContent className="p-4">
+                <CardTitle className="text-purple-800">{product.name}</CardTitle>
+                <p className="text-sm text-purple-600">{product.price} PI</p>
+              </CardContent>
+              <CardFooter className="p-4">
+                <Button onClick={() => handlePurchase(product)} className="w-full bg-purple-600 hover:bg-purple-700 text-yellow-100">Buy Now</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </main>
+
+      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+        <DialogContent className="bg-yellow-50 border-purple-200">
+          <DialogHeader>
+            <DialogTitle className="text-purple-800">Complete Your Purchase</DialogTitle>
+            <DialogDescription className="text-purple-600">
+              Enter your PI wallet address to complete the transaction.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="wallet" className="text-right text-purple-600">
+                PI Wallet
+              </Label>
+              <Input
+                id="wallet"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" onClick={handlePayment} className="bg-purple-600 hover:bg-purple-700 text-yellow-100">Pay {selectedProduct?.price} PI</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isConfirmationModalOpen} onOpenChange={setIsConfirmationModalOpen}>
+        <DialogContent className="bg-yellow-50 border-purple-200">
+          <DialogHeader>
+            <DialogTitle className="text-purple-800">Purchase Confirmed</DialogTitle>
+            <DialogDescription className="text-purple-600">
+              Your transaction was successful. Here's your reference number for tracking:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-center text-2xl font-bold text-purple-800">{referenceNumber}</p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setIsConfirmationModalOpen(false)} className="bg-purple-600 hover:bg-purple-700 text-yellow-100">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <footer className="fixed bottom-0 left-0 right-0 bg-yellow-200 border-t border-purple-300">
+        <div className="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
+          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
+            <Home className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
+            <Search className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
+            <PlusSquare className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
+            <Heart className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-yellow-300">
+            <User className="h-6 w-6" />
+          </Button>
+        </div>
+      </footer>
+    </div>
+  )
+}
